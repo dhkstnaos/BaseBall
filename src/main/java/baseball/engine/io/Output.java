@@ -5,7 +5,7 @@ import baseball.engine.model.BallCount;
 public interface Output {
     void ballCount(BallCount ballCount);
 
-    void inputError();
+    void inputError(RuntimeException ex);
 
     void correct();
 }

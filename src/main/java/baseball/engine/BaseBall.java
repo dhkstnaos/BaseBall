@@ -8,7 +8,6 @@ import baseball.engine.model.Numbers;
 import lombok.AllArgsConstructor;
 
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @AllArgsConstructor
 public class BaseBall implements Runnable {
@@ -24,55 +23,19 @@ public class BaseBall implements Runnable {
         Numbers answer = generator.generate(COUNT_OF_NUMBERS);
 
         while (true) {
-            String inputString = input.input("숫자를 맞춰보세요. :");
-            Optional<Numbers> inputNumbers = parse(inputString);
-            if (!inputNumbers.isPresent()) {
-                output.inputError();
-                continue;
-            }
+            try {
+                String inputString = input.input("숫자를 맞춰보세요. :");
 
-            BallCount bc = ballCount(answer, inputNumbers.get());
-            output.ballCount(bc);
+                BallCount bc = BallCount.create(answer, Numbers.parse(inputString));
+                output.ballCount(bc);
 
-            if (bc.getStrike() == COUNT_OF_NUMBERS) {
-                output.correct();
-                break;
+                if (bc.getStrike() == COUNT_OF_NUMBERS) {
+                    output.correct();
+                    break;
+                }
+            } catch (RuntimeException e) {
+                output.inputError(e);
             }
         }
-    }
-
-    private BallCount ballCount(Numbers answer, Numbers inputNumbers) {
-        AtomicInteger strike = new AtomicInteger();
-        AtomicInteger ball = new AtomicInteger();
-
-        answer.indexedForEach((a, i) -> {
-            inputNumbers.indexedForEach((n, j) -> {
-                if (!a.equals(n)) return;
-                if (i.equals(j)) strike.addAndGet(1);
-                else ball.addAndGet(1);
-            });
-        });
-        return new BallCount(strike.get(), ball.get());
-    }
-
-    private Optional<Numbers> parse(String inputString) {
-        if (inputString.length() != COUNT_OF_NUMBERS) return Optional.empty();
-
-        long count = inputString.chars()
-                .filter(Character::isDigit)
-                .map(Character::getNumericValue)
-                .filter(i -> i > 0)
-                .distinct()
-                .count();
-        if (count != COUNT_OF_NUMBERS) return Optional.empty();
-
-        return Optional.of(
-                new Numbers(
-                        inputString.chars()
-                                .map(Character::getNumericValue)
-                                .boxed()
-                                .toArray(Integer[]::new)
-                )
-        );
     }
 }

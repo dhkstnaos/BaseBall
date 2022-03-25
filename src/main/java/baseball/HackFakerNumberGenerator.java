@@ -13,9 +13,9 @@ public class HackFakerNumberGenerator implements NumberGenerator {
     public Numbers generate(int count) {
         Numbers nums = new Numbers(
                 Stream.generate(() -> faker.number().randomDigitNotZero())
-                        .distinct()
-                        .limit(count)
-                        .toArray(Integer[]::new)
+                      .distinct()
+                      .limit(count)
+                      .toArray(Integer[]::new)
         );
         System.out.println(nums);
         return nums;

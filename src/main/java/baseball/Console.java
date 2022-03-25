@@ -9,14 +9,14 @@ public class Console implements Input, Output {
     private final Scanner scanner = new Scanner(System.in);
 
     @Override
-    public String input(String s) {
-
-        return null;
+    public String input(String prompt) {
+        System.out.print(prompt);
+        return scanner.nextLine();
     }
 
     @Override
-    public void ballCount(BallCount ballCount) {
-        System.out.println(ballCount.getStrike()+" Strikes, "+ ballCount.getBall() + " Balls");
+    public void ballCount(BallCount bc) {
+        System.out.println(bc.getStrike() + " Strikes, " + bc.getBall() + " Balls");
     }
 
     @Override
